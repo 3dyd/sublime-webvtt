@@ -1,0 +1,137 @@
+# SYNTAX TEST "WebVTTTest.sublime-syntax"
+WEBVTT
+# ^ entity.name.tag.header.webvtt
+
+crédit de transcription
+# <- meta.id.webvtt keyword.webvtt
+#^^^^^^^^^^^^^^^^^^^^^^ meta.id.webvtt keyword.webvtt
+00:11.000 --> 00:13.000
+
+00:11.000 --> 00:00:13.000
+# <- meta.interval.webvtt meta.timestamp.webvtt
+#^^^^^^^^^^^^^^^^^^^^^^^^^ meta.interval.webvtt
+#^^^^^^^^ meta.timestamp.webvtt
+# ^ punctuation.separator.webvtt
+#    ^ punctuation.separator.webvtt
+#         ^^^ punctuation.terminator.webvtt -meta.timestamp.webvtt
+#             ^^^^^^^^^^^^ meta.timestamp.webvtt
+#               ^ punctuation.separator.webvtt
+#                  ^ punctuation.separator.webvtt
+#                     ^ punctuation.separator.webvtt
+
+# <- -meta.cue.webvtt
+
+3
+# <- meta.cue.webvtt
+00:00:00.000 --> 00:04.000
+# <- meta.cue.webvtt
+#^^^^^^^^^^^^^^^^^^^^^^^^^ meta.cue.webvtt
+Sed ut
+#^^^^^ meta.cue.webvtt
+
+# <- -meta.cue.webvtt
+
+# <- -meta.cue.webvtt
+
+00:15.001 --> 00:19.666
+Sed ut perspiciatis,
+# <- meta.text.webvtt text.html.basic
+#^^^^^^^^^^^^^^^^^^^ meta.text.webvtt text.html.basic
+
+00:19.667 --> 01:21.700
+Nemo enim ipsam voluptatem,
+quia voluptas sit,
+aspernatur aut odit aut fugit
+# <- meta.text.webvtt text.html.basic
+
+01:27.900 --> 01:51.100
+neque <i>porro quisquam est,</i>
+#     ^^^ meta.tag.inline.any.html
+#                           ^^^^ meta.tag.inline.any.html
+
+00:30.000 --> 00:31.500 align:right size:50%
+neque
+# <- text.html.basic
+
+00:00.000 --> 00:04.000 region:fred position:10%,line-left
+#                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.interval.webvtt
+#                       ^^^^^^ meta.property-name.css
+#                              ^^^^ meta.property-value.css
+#                                   ^^^^^^^^ meta.property-name.css
+#                                            ^^^^^^^^^^^^^ meta.property-value.css
+
+STYLE 
+# <- entity.name.tag.style.webvtt
+#^^^^ entity.name.tag.style.webvtt
+#    ^ -entity.name.tag.style.webvtt
+::cue {
+# <- source.css
+  background-image: linear-gradient(to bottom, dimgray, lightgray);
+  color --> papayawhip;
+#       ^^^ invalid.illegal.webvtt
+}
+/* Style blocks cannot use blank lines nor "dash dash greater than" */
+# <- source.css
+
+# <- -source.css
+
+NOTE comment --> block
+# <- comment.block.webvtt entity.name.tag.note.webvtt
+#^^^ entity.name.tag.note.webvtt
+#   ^ -entity.name.tag.note.webvtt
+#^^^^^^^^^^^^^^^^^^^^^ comment.block.webvtt
+#            ^^^ invalid.illegal.webvtt
+
+NOTE
+This file was written by Jill. I hope
+you enjoy reading it.
+# <- comment.block.webvtt
+
+REGION 
+# <- entity.name.tag.region.webvtt
+#^^^^^ entity.name.tag.region.webvtt
+#     ^ -entity.name.tag.region.webvtt
+id:fred a
+#     ^ meta.property-value.region.webvtt
+#      ^^ -meta.property-value.region.webvtt
+width:40.1% lines:3
+#   ^ meta.property-name.region.webvtt
+#     ^^^^^ meta.property-value.region.webvtt constant.numeric.webvtt
+#         ^ keyword.other.unit.webvtt
+#           ^ meta.property-name.region.webvtt
+#                ^ punctuation.separator.key-value.webvtt
+#                 ^ meta.property-value.region.webvtt constant.numeric.webvtt
+lines:1d
+#     ^ -constant.numeric.webvtt
+regionanchor:0%,100%
+#            ^^^^^^^ meta.property-value.region.webvtt
+#              ^ punctuation.definition.webvtt -constant.numeric.webvtt
+#               ^^^^ constant.numeric.webvtt
+region-->anchor:0%,100%
+#     ^^^ invalid.illegal.webvtt
+unknown:123
+# <- meta.property-name.region.webvtt
+#      ^ punctuation.separator.key-value.webvtt
+#       ^ meta.property-value.region.webvtt
+scroll:up
+#     ^ punctuation.separator.key-value.webvtt
+#      ^ meta.property-value.region.webvtt constant.language.webvtt
+
+00:11.441 --> 00:14.441
+{
+# <- source.json
+ "type": "LongLat",
+ "lat" : 36.198269,
+ "long": 137.2315355
+}
+# <- source.json
+
+# <- -source.json
+
+# TODO:
+02:00.000 --> 02:05.000
+<c.yellow.bg_blue>This is yellow text on a blue background</c>
+<c.yellow.bg_blue.magenta.bg_black>This is magenta text on a black background</c> 
+Sur les <i.foreignphrase><lang en>playground</lang></i>, ici à Montpellier
+<v.first.loud Esme>It’s a blue apple tree!
+<v Mary>No way!</v>

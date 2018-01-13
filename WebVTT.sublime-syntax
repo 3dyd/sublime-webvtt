@@ -1,0 +1,170 @@
+%YAML 1.2
+---
+name: WebVTT
+comment: https://w3c.github.io/webvtt/
+first_line_match: ^WEBVTT\s*$
+file_extensions:
+  - vtt
+scope: text.webvtt
+variables:
+  pc: (\d+(?:\.\d*)?(%))
+  wt: (?=[ \t]|$)
+
+contexts:
+  body:
+    - include: note
+    - include: style
+    - include: region
+    - include: cue
+
+  cue:
+    - match: (?=.)
+      set: [cue-meta, id]
+
+  cue-meta:
+    - meta_scope: meta.cue.webvtt
+    - match: ''
+      set: body
+
+  header:
+    - match: ^WEBVTT
+      scope: entity.name.tag.header.webvtt
+      set: body
+
+  id:
+    - match: ^(?=.+-->)
+      set: interval
+    - match: ^.+$
+      scope: meta.id.webvtt keyword.webvtt
+      set: interval
+
+  interval:
+    - match: ''
+      set: [interval-meta, settings, timestamp, interval-sep, timestamp]
+
+  interval-meta:
+    - meta_scope: meta.interval.webvtt
+    - match: \n
+      set: [text-meta, text-value]
+
+  interval-sep:
+    - match: '[ \t]+(-->)[ \t]+'
+      captures:
+        1: punctuation.terminator.webvtt
+      pop: true
+
+  main:
+    - include: header
+
+  note:
+    - match: '^NOTE{{wt}}'
+      scope: entity.name.tag.note.webvtt
+      push:
+        - meta_scope: comment.block.webvtt
+        - match: (?=^\n)
+          pop: true
+        - match: -->
+          scope: invalid.illegal.webvtt
+
+  region:
+    - match: ^REGION(?=[ \t]*$)
+      scope: entity.name.tag.region.webvtt
+      push:
+        - meta_scope: meta.property-list.region.webvtt 
+        - match: .*-->
+          scope: invalid.illegal.webvtt
+        - include: region-settings
+        - match: (?=^\n)
+          pop: true
+
+  region-settings:
+    - match: (?=\w)
+      push:
+        - meta_scope: meta.property-name.region.webvtt
+        - match: (?=\W|$)
+          pop: true
+        - match: id|width|lines|regionanchor|viewportanchor|scroll
+          scope: support.type.property-name.webvtt
+    - match: (:)
+      scope: punctuation.separator.key-value.webvtt
+      push:
+        - meta_scope: meta.property-value.region.webvtt
+        - match: (?=\W|$)
+          pop: true
+        - match: (?<=id:)\G\w+
+          scope: string.unquoted.webvtt
+        - match: '(?<=width:)\G{{pc}}{{wt}}'
+          captures:
+            1: constant.numeric.webvtt
+            2: keyword.other.unit.webvtt
+        - match: '(?<=lines:)\G\d+{{wt}}'
+          scope: constant.numeric.webvtt
+        - match: '(?<=regionanchor:|viewportanchor:){{pc}}(,){{pc}}{{wt}}'
+          captures:
+            1: constant.numeric.webvtt
+            2: keyword.other.unit.webvtt
+            3: punctuation.definition.webvtt
+            4: constant.numeric.webvtt
+            5: keyword.other.unit.webvtt
+        - match: '(?<=scroll:)\Gup{{wt}}'
+          scope: constant.language.webvtt
+
+  settings:
+    - match: (?=$)
+      pop: true
+    # Content of cue settings list is unspecified. And format is similar to CSS
+    # rules list. So just borrow it and additionally define rules commonly used
+    # in cue settings list
+    - match: (?<=\s)(align|region)?
+      scope: meta.property-name.css support.type.property-name.css
+      push: scope:source.css#rule-list-body
+      with_prototype:
+        - match: (?<=\sregion:)\S+
+          scope: string.unquoted.webvtt
+        - match: (?=\s)
+          pop: true
+
+  style:
+    - match: ^STYLE(?=[ \t]*$)
+      scope: entity.name.tag.style.webvtt
+      push: scope:source.css
+      with_prototype:
+        - match: (?=^\n)
+          pop: true
+        - match: -->
+          scope: invalid.illegal.webvtt
+
+  text-meta:
+    - meta_content_scope: meta.text.webvtt
+    - match: ''
+      pop: true
+
+  text-value:
+    - match: (?=^\n)
+      pop: true
+    - match: (?=\{)
+      push: scope:source.json
+      with_prototype:
+        - match: (?=^\n)
+          pop: true
+    # Note, cue text is a subset of HTML. And tags in this subset have more
+    # complex syntax than appropriate tags in HTML. So, the use of HTML scope
+    # is not really correct, but better than nothing for the first time
+    - match: (?=.)
+      push: scope:text.html.basic
+      with_prototype:
+        - match: (?=^\n)
+          pop: true
+
+  timestamp:
+    - match: ((?:(\d{2,})(:))?(\d\d)(:)(\d\d)(\.)(\d{3}))
+      captures:
+        1: meta.timestamp.webvtt
+        2: constant.numeric.webvtt
+        3: punctuation.separator.webvtt
+        4: constant.numeric.webvtt
+        5: punctuation.separator.webvtt
+        6: constant.numeric.webvtt
+        7: punctuation.separator.webvtt
+        8: constant.numeric.webvtt
+      pop: true
